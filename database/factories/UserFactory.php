@@ -22,10 +22,15 @@ class UserFactory extends Factory
             'username' => $this->faker->unique()->userName(),
             'avatar' => 'https://i.pravatar.cc/150?img='.
             $this->faker->numberBetween(1, 70),
+            'profile' => $this->faker->sentence(14),
+            'location' => $this->faker->city(14).','.$this->faker->country(),
+            'link' => 'https://crossandchrist.com',
+            'linkText' => collect(['crossandchrist.com', 'jiro.com'])->random(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
+            'created_at' => $this->faker->dateTimeBetween('-5 years', now()),
         ];
     }
 
