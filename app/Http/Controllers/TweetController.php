@@ -13,7 +13,12 @@ class TweetController extends Controller
      */
     public function index()
     {
-        //
+        $followers = auth()->user()->follows->pluck('id');
+
+        return Tweet::with('user:id,name,username,avatar')
+            ->whereIn('user_id', $followers)
+            ->latest()
+            ->paginate(10);
     }
 
     /**
@@ -29,7 +34,14 @@ class TweetController extends Controller
      */
     public function store(StoreTweetRequest $request)
     {
-        //
+        $request->validate([
+            'body' => 'required'
+        ]);
+    
+        return Tweet::create([
+            'user_id' => auth()->id(),
+            'body' => $request->body,
+        ]);
     }
 
     /**
@@ -37,7 +49,7 @@ class TweetController extends Controller
      */
     public function show(Tweet $tweet)
     {
-        //
+        return $tweet->load('user:id,name,username,avatar');
     }
 
     /**
@@ -61,6 +73,8 @@ class TweetController extends Controller
      */
     public function destroy(Tweet $tweet)
     {
-        //
+        abort_if($tweet->user->id !== auth()->id(), 403);
+
+        return response()->json($tweet->delete(), 200);
     }
 }
